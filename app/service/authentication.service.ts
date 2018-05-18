@@ -5,7 +5,6 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class AuthenticationService {
-    basePath: string = 'https://jsonplaceholder.typicode.com/';
     constructor(private http: Http) { }
     login(username: string, password: string) {
         return this.http.post('https://jsonplaceholder.typicode.com/users/2', JSON.stringify({ username: username, password: password }), this.options)
