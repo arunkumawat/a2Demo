@@ -1,0 +1,74 @@
+<!-- Bootstrap Header Nav -->
+<nav class="navbar navbar-default navbar-fixed-top" id="mainHeader">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNav" aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+      />
+    </div>
+
+    <div *ngIf="rolesArr.length>0" class="collapse navbar-collapse" id="mainNav">
+      <ul class="nav navbar-nav">
+        <li>
+          <a routerLink="/calculator" class="sectionLink "><i class="fa fa-calculator"></i>&nbsp;Calculator</a>
+        </li>
+
+        <li *ngIf="rolesArr.indexOf('bd') > 0 || rolesArr.indexOf('admin') > 0" class="dropdown active">
+          <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-secret"></i>&nbsp;Admin&nbsp;&nbsp;<i class="fa fa-caret-down"></i></a>
+          <ul class="dropdown-menu">
+            <li><a routerLink="/admin/registerClient" class="sectionLink">Register Client</a></li>
+            <li><a routerLink="/admin/registrationReport" class="sectionLink activeNavLink">Registration Report</a></li>
+            <li *ngIf="rolesArr.indexOf('admin') > 0" role="separator" class="divider"></li>
+            <li *ngIf="rolesArr.indexOf('admin') > 0"><a routerLink="/admin/users" class="sectionLink">Users</a></li>
+            <li *ngIf="rolesArr.indexOf('admin') > 0"><a routerLink="/admin/systemConfig" class="sectionLink">System Config</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><span class="headerUser"><i class="fa fa-user fa-lg"></i>&nbsp;&nbsp;&nbsp;{{loggedInUserName}} &nbsp;&nbsp;</span></li>
+        <li><span class="headerUser" [routerLink]="['/login']">Logout</span></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div [ngBusy]="[busyA,busyB]"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-info">
+        <div class="panel-heading panel-title">Registered Client Users</div>
+        <div class="panel-body">
+          <div class="scrollDiv600">
+            <table class="table table-bordered table-striped table-condensed">
+              <thead>
+                <tr>
+                  <th (click)="sort('firstName')">Name <i class="fa" [ngClass]="{'fa-sort': column != 'firstName', 'fa-sort-asc': (column == 'firstName' && isDesc), 'fa-sort-desc': (column == 'firstName' && !isDesc) }" aria-hidden="true"> </i></th>
+                  <th (click)="sort('email')">Email <i class="fa" [ngClass]="{'fa-sort': column != 'email', 'fa-sort-asc': (column == 'email' && isDesc), 'fa-sort-desc': (column == 'email' && !isDesc) }" aria-hidden="true"></i></th>
+                  <th (click)="sort('registeredDate')">Registered Date <i class="fa" [ngClass]="{'fa-sort': column != 'registeredDate', 'fa-sort-asc': (column == 'registeredDate' && isDesc), 'fa-sort-desc': (column == 'registeredDate' && !isDesc) }" aria-hidden="true"></i></th>
+                  <th (click)="sort('status')">Activation Status <i class="fa" [ngClass]="{'fa-sort': column != 'status', 'fa-sort-asc': (column == 'status' && isDesc), 'fa-sort-desc': (column == 'status' && !isDesc) }" aria-hidden="true"> </i></th>
+                  <th (click)="sortByRegisteredBy()">Registered By <i class="fa" [ngClass]="{'fa-sort': column != 'registeredBy', 'fa-sort-asc': (column == 'registeredBy' && isDesc), 'fa-sort-desc': (column == 'registeredBy' && !isDesc) }" aria-hidden="true"> </i></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody class="t_hover">
+                <tr *ngFor="let client of clientList">
+                  <td>{{client.firstName}} {{client.lastName}}</td>
+                  <td>{{client.email}}</td>
+                  <td>{{getDatePart(client.registeredDate)}}</td>
+                  <td>{{client.status}}</td>
+                  <td>{{client.registeredBy.firstName}} {{client.registeredBy.lastName}}</td>
+                  <td class="pull-center"><span class="hasTooltip" data-title="Re-Register"><i class="fa fa-refresh" (click)="reRegister(client.id)"></i></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,265 @@
+<!-- Bootstrap Header Nav -->
+<nav class="navbar navbar-default navbar-fixed-top" id="mainHeader">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNav" aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+      />
+    </div>
+
+    <div *ngIf="rolesArr.length>0" class="collapse navbar-collapse" id="mainNav">
+      <ul class="nav navbar-nav">
+        <li>
+          <a routerLink="/calculator" class="sectionLink"><i class="fa fa-calculator"></i>&nbsp;Calculator</a>
+        </li>
+
+        <li *ngIf="rolesArr.indexOf('bd') > 0 || rolesArr.indexOf('admin') > 0" class="dropdown active">
+          <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-secret"></i>&nbsp;Admin&nbsp;&nbsp;<i class="fa fa-caret-down"></i></a>
+          <ul class="dropdown-menu">
+            <li><a routerLink="/admin/registerClient" class="sectionLink">Register Client</a></li>
+            <li><a routerLink="/admin/registrationReport" class="sectionLink">Registration Report</a></li>
+            <li *ngIf="rolesArr.indexOf('admin') > 0" role="separator" class="divider"></li>
+            <li *ngIf="rolesArr.indexOf('admin') > 0"><a routerLink="/admin/users" class="sectionLink activeNavLink">Users</a></li>
+            <li *ngIf="rolesArr.indexOf('admin') > 0"><a routerLink="/admin/systemConfig" class="sectionLink">System Config</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><span class="headerUser"><i class="fa fa-user fa-lg"></i>&nbsp;&nbsp;&nbsp;{{loggedInUserName}} &nbsp;&nbsp;</span></li>
+        <li><span class="headerUser" [routerLink]="['/login']">Logout</span></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div [ngBusy]="[busyA,busyB]"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <div *ngIf="_uList" class="panel panel-info">
+        <div class="panel-heading panel-title">User Management - Users</div>
+        <div class="panel-body">
+          <button href="addUser" class="btn btn-primary pull-left" (click)="addNewUser()"><span class="fa fa-plus"></span> Add New User </button>&nbsp;<br>&nbsp;<br>
+          <div class="scrollDiv600">
+            <table class="table table-bordered table-striped table-condensed" style="padding-bottom: 20px;">
+              <thead style="background-color: #f9f9f9;">
+                <tr>
+                  <th (click)="sort('firstName')">First Name <i class="fa" [ngClass]="{'fa-sort': column != 'firstName', 'fa-sort-asc': (column == 'firstName' && isDesc), 'fa-sort-desc': (column == 'firstName' && !isDesc) }" aria-hidden="true"> </i></th>
+                  <th (click)="sort('lastName')">Last Name <i class="fa" [ngClass]="{'fa-sort': column != 'lastName', 'fa-sort-asc': (column == 'lastName' && isDesc), 'fa-sort-desc': (column == 'lastName' && !isDesc) }" aria-hidden="true"> </i></th>
+                  <th (click)="sort('email')">Email <i class="fa" [ngClass]="{'fa-sort': column != 'email', 'fa-sort-asc': (column == 'email' && isDesc), 'fa-sort-desc': (column == 'email' && !isDesc) }" aria-hidden="true"> </i></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody class="t_hover">
+                <tr *ngFor="let user of userList">
+                  <td>{{user.firstName}}</td>
+                  <td>{{user.lastName}}</td>
+                  <td>{{user.email}}</td>
+                  <td class="pull-center">
+                    <span class="hasTooltip" data-title="View"><i class="fa fa-list-alt" (click)="view(user.id)"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span class="hasTooltip" data-title="Edit"><i class="fa fa-pencil" (click)="edit(user.id)"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span class="hasTooltip" data-title="Delete"><i class="fa fa-trash" (click)="delete(user.id, user.firstName, user.lastName)"></i>&nbsp;</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="_uView" class="panel panel-info">
+        <div class="panel-heading panel-title">User Management - User Details</div>
+        <div class="panel-body" style="padding:20px;">
+          <button class="btn btn-primary pull-right" (click)="edit(viewUser.id)"><span class="fa fa-pencil"></span> Edit User </button>&nbsp;<br>&nbsp;<br>&nbsp;<br>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <label class="pull-right">User Name</label>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+              {{viewUser.userName}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <label class="pull-right">Account Status</label>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+              {{viewUser.status}}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <label class="pull-right">Email</label>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+              {{viewUser.email}}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <label class="pull-right">First Name</label>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+              {{viewUser.firstName}}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <label class="pull-right">Last Name</label>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+              {{viewUser.lastName}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <label class="pull-right">Role</label>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+              {{viewUser.roleType.name}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <label class="pull-right">Notes</label>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+              {{viewUser.notes}}
+            </div>
+          </div>
+          <br><br>
+          <button class="btn btn-default pull-right" (click)="cancel()">Cancel</button>&nbsp;<br>&nbsp;
+        </div>
+      </div>
+
+
+      <div *ngIf="_uEdit" class="panel panel-info">
+        <div class="panel-heading panel-title">User Management - User Details</div>
+        <div class="panel-body" style="padding:20px;">
+          <button class="btn btn-primary pull-right" (click)="delete(editUser.id,editUser.firstName,editUser.lastName)"><span class="fa fa-trash-o"></span> Delete User </button>&nbsp;<br>&nbsp;<br>&nbsp;<br>
+          <form (ngSubmit)="save()">
+            <div style="border: 1px solid #dddddd; padding:10px;">
+              <div class="form-group">
+                <label for="un" class="col-sm-2 col-form-label">User Name <span style="color:red">*</span></label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" required name="un" [(ngModel)]="editUser.userName">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="as" class="col-sm-2 col-sm-offset-1 col-form-label">Account Status</label>
+                <div class="col-sm-1">
+                  <label class="switch">
+                  <input type="checkbox" [checked]="editUser.status=='Active' || editUser.status=='active'" #cv (change)="onCBChange(cv.checked)">
+                  <span class="slider round"></span>
+                </label>
+                </div><strong style="padding-top: 6px;">{{editUser.status}}</strong>
+              </div>
+              <br>
+              <div class="form-group row" style="padding-left:15px;">
+                <label for="ee" class="col-sm-2 col-form-label">Email <span style="color:red">*</span></label>
+                <div class="col-sm-4">
+                  <input type="email" class="form-control" name="ee" [(ngModel)]="editUser.email" required maxlength="150">
+                </div>
+              </div>
+              <div class="form-group row" style="padding-left:15px;">
+                <label for="fn" class="col-sm-2 col-form-label">First Name <span style="color:red">*</span></label>
+                <div class="col-sm-4">
+                  <input type="text" required class="form-control" name="fn" [(ngModel)]="editUser.firstName">
+                </div>
+              </div>
+              <div class="form-group row" style="padding-left:15px;">
+                <label for="ln" class="col-sm-2 col-form-label">Last Name <span style="color:red">*</span></label>
+                <div class="col-sm-4">
+                  <input type="text" required class="form-control" name="ln" [(ngModel)]="editUser.lastName">
+                </div>
+              </div>
+              <div class="form-group row" style="padding-left:15px;">
+                <label for="rn" class="col-sm-2 col-form-label">Role <span style="color:red">*</span></label>
+                <div class="col-sm-3" style="padding: 0 6px 6px 10px; margin: 0 10px 0 15px;">
+                  <label class="radio-inline"><input required type="radio" name="roleType" [(ngModel)]="editUser.roleType.name" value="BD">BD</label>
+                  <label class="radio-inline"><input required type="radio" name="roleType" [(ngModel)]="editUser.roleType.name" value="Admin">Admin</label>
+                </div>
+              </div>
+              <div class="form-group row" style="padding-left:15px;">
+                <label for="n" class="col-sm-2 col-form-label">Notes</label>
+                <div class="col-sm-4">
+                  <textarea [(ngModel)]="editUser.notes" name="n" maxlength="999" class="form-control" rows="5"></textarea>
+                </div>
+              </div>
+            </div><br><br>
+            <button class="btn btn-default pull-right" style="margin-left:20px;" (click)="cancel()">Cancel</button>
+            <input type="submit" class="btn btn-primary pull-right" value="Save User">
+          </form>
+        </div>
+      </div>
+
+
+      <div *ngIf="_uAdd" class="panel panel-info">
+        <div class="panel-heading panel-title">User Management - New User</div>
+        <div class="panel-body" style="padding:20px;">
+          <form (ngSubmit)="createUser()">
+            <div class="form-group row">
+              <label for="aun" class="col-sm-2 col-form-label">User Name <span style="color:red">*</span></label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" name="aun" required [(ngModel)]="addUser.userName">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="ae" class="col-sm-2 col-form-label">Email <span style="color:red">*</span></label>
+              <div class="col-sm-4">
+                <input type="email" class="form-control" name="ae" [(ngModel)]="addUser.email" required maxlength="150">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="afn" class="col-sm-2 col-form-label">First Name <span style="color:red">*</span></label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" required name="afn" [(ngModel)]="addUser.firstName">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="aln" class="col-sm-2 col-form-label">Last Name <span style="color:red">*</span></label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" required name="aln" [(ngModel)]="addUser.lastName">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="arn" class="col-sm-2 col-form-label">Role <span style="color:red">*</span></label>
+              <div class="col-sm-3" style="padding: 0 6px 6px 10px; margin: 0 10px 0 15px;">
+                <label class="radio-inline"><input type="radio" required name="aroleType" [(ngModel)]="addUser.roleType.name" value="BD">BD</label>
+                <label class="radio-inline"><input type="radio" required name="aroleType" [(ngModel)]="addUser.roleType.name" value="Admin">Admin</label>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="aan" class="col-sm-2 col-form-label">Notes</label>
+              <div class="col-sm-4">
+                <textarea [(ngModel)]="addUser.notes" name="aan" maxlength="999" class="form-control" rows="5"></textarea>
+              </div>
+            </div>
+            <hr>
+            <button class="btn btn-default pull-right" style="margin-left:5px;" (click)="cancel()">Cancel</button>
+            <input type="submit" class="btn btn-primary pull-right" value="Create User">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<modal #modal [keyboard]="false" [backdrop]="'static'">
+  <modal-header [show-close]="true">
+    <h4 class="modal-title">Are you sure!!</h4>
+  </modal-header>
+  <modal-body>
+    This will delete <strong>{{d_Uname}}</strong> from users list. Are you sure you want to continue?
+  </modal-body>
+  <modal-footer>
+    <button type="button" class="btn btn-primary" (click)="deleteIt()">Yes</button>
+    <button type="button" class="btn btn-default" (click)="modal.close()">Cancel</button>
+  </modal-footer>
+</modal>
