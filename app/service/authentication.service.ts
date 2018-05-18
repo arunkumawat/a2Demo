@@ -5,13 +5,8 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class AuthenticationService {
-    basePath: string = 'http://US1SCPSPT08D:82/api/';
-    
-    headers = new Headers({ 'Content-Type': 'application/json'});
-
-    options = new RequestOptions({ headers: this.headers });
+    basePath: string = 'https://jsonplaceholder.typicode.com/';
     constructor(private http: Http) { }
-
     login(username: string, password: string) {
         return this.http.post(this.basePath + 'Users/login', JSON.stringify({ username: username, password: password }), this.options)
             .map((response: Response) => {
@@ -19,22 +14,17 @@ export class AuthenticationService {
                     return response.json().message; 
                 }
                 let user = response.json().data;
-                if (user && user.token) {
-                    localStorage.setItem('cccurrentUserToken', user.token);
-                    localStorage.setItem('cccurrentUserRole', user.roleType.name);
-                    localStorage.setItem('cccurrentUserName', user.firstName + " " + user.lastName);
+                if (user) {
+                    localStorage.setItem('cccurrentUserRole', user.name);
                 }
             });
     }
 
     logout() {
         if(localStorage.getItem('cccurrentUserToken')) {
-            let headers = new Headers({ 'Content-Type': 'application/json', 'x-access-token': localStorage.getItem('cccurrentUserToken')});
             return this.http.post(this.basePath + 'Users/logout', {}, new RequestOptions({ headers: headers })).map(res => {
                 res.json();
-                localStorage.removeItem('cccurrentUserToken');
                 localStorage.removeItem('cccurrentUserRole');
-                localStorage.removeItem('cccurrentUserName');
             });
         }
     }
