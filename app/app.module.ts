@@ -10,7 +10,6 @@ import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './components/admin/not-found.component';
 
 import { LoginComponent } from './components/login/login.component';
-import { AuthenticationService } from './services/authentication.service';
 import { AuthGuard } from './services/auth.guard';
 import { Roles } from './services/roles';
 
@@ -42,7 +41,7 @@ let options: ToastOptions = new ToastOptions({
     imports: [BrowserModule, HttpModule, routing, FormsModule, Ng2CompleterModule, Ng2Bs3ModalModule, ToastModule.forRoot(options), NgbModule.forRoot(), BusyModule],
     declarations: [AppComponent, PageNotFoundComponent, LoginComponent, CalculatorComponent, NoAccessComponent,
         RegisterClientComponent, RegistrationReportComponent, UsersComponent, SystemConfigComponent,NvD3Component],
-    providers: [AuthGuard, AuthenticationService, Roles, { provide: LocationStrategy, useClass: HashLocationStrategy }],
+    providers: [AuthGuard, Roles, { provide: LocationStrategy, useClass: HashLocationStrategy }],
     bootstrap: [AppComponent]
 })
 
