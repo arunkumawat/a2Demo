@@ -31,12 +31,10 @@ export class SystemConfigComponent extends Util {
     }
 
     save() {
-        this.busyA = this.ps.put('Calculator/EditConfig', this.config).subscribe(posts => {
+        this.busyA = this.ps.put('config', this.config).subscribe(posts => {
             if (!posts.isSuccess) {
                 this.toastr.error(posts.message, 'Important');
                 return;
-            } else {
-                this.toastr.success("System Config values successfully saved", 'Success');
             }
         });
     }
