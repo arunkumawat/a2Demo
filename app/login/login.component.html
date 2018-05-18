@@ -1,0 +1,35 @@
+
+<form (ngSubmit)="login()" class="form-horizontal" role="form">
+    <div class="container pull-center">
+        <div class="col-sm-6 col-sm-offset-3" id="preAuthWrapper">
+            <div class="text-center">
+                <span style="font-size: 20px;">Questio Cost Comparison</span>
+            </div>
+            <section id="loginForm">
+                <div class="form-group">
+                    <div class="col-xs-10 col-xs-offset-1">
+                        <input class="form-control text-box single-line" id="username" name="username" [(ngModel)]="model.username" required maxlength="100" autofocus placeholder="Username" type="text" value="" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-10 col-xs-offset-1">
+                        <input class="form-control" placeholder="Password" name="password" type="password" [(ngModel)]="model.password" required maxlength="30" value="" />
+                    </div>
+                </div>
+                <div class="form-group loginBtnArea">
+                    <div class="pull-right">
+                        <input class="btn btn-primary preAuthButton" id="loginBtn" [disabled]="!(model.username.length>0 && model.password.length>0)" type="submit" value="Log In" />
+                    </div>
+                </div>
+                <div id="troubleLoginArea">
+                    <span id="troubleLoginText">
+                        Trouble logging in?
+                    </span>
+                    <span>
+                        <a class="contactSupportLink" href="mailto:s@gm.com">Contact Support</a>
+                    </span>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
