@@ -8,7 +8,7 @@ export class AuthenticationService {
     basePath: string = 'https://jsonplaceholder.typicode.com/';
     constructor(private http: Http) { }
     login(username: string, password: string) {
-        return this.http.post(this.basePath + 'Users/login', JSON.stringify({ username: username, password: password }), this.options)
+        return this.http.post('https://jsonplaceholder.typicode.com/users/2', JSON.stringify({ username: username, password: password }), this.options)
             .map((response: Response) => {
                 if(response && !response.json().isSuccess) {
                     return response.json().message; 
@@ -22,7 +22,7 @@ export class AuthenticationService {
 
     logout() {
         if(localStorage.getItem('cccurrentUserToken')) {
-            return this.http.post(this.basePath + 'Users/logout', {}, new RequestOptions({ headers: headers })).map(res => {
+            return this.http.post('---/logout/api---', {}, new RequestOptions({ headers: headers })).map(res => {
                 res.json();
                 localStorage.removeItem('cccurrentUserRole');
             });
