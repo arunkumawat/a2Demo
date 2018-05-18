@@ -1,0 +1,180 @@
+<!-- Bootstrap Header Nav -->
+<nav class="navbar navbar-default navbar-fixed-top" id="mainHeader">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNav" aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+      />
+    </div>
+
+    <div *ngIf="rolesArr.length>0" class="collapse navbar-collapse" id="mainNav">
+      <ul class="nav navbar-nav">
+        <li>
+          <a routerLink="/calculator" class="sectionLink activeNavLink"><i class="fa fa-calculator"></i>&nbsp;Calculator</a>
+        </li>
+
+        <li *ngIf="rolesArr.indexOf('bd') > 0 || rolesArr.indexOf('admin') > 0" class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-secret"></i>&nbsp;Admin&nbsp;&nbsp;<i class="fa fa-caret-down"></i></a>
+          <ul class="dropdown-menu">
+            <li><a routerLink="/admin/registerClient" class="sectionLink">Register Client</a></li>
+            <li><a routerLink="/admin/registrationReport" class="sectionLink">Registration Report</a></li>
+            <li *ngIf="rolesArr.indexOf('admin') > 0" role="separator" class="divider"></li>
+            <li *ngIf="rolesArr.indexOf('admin') > 0"><a routerLink="/admin/users" class="sectionLink">Users</a></li>
+            <li *ngIf="rolesArr.indexOf('admin') > 0"><a routerLink="/admin/systemConfig" class="sectionLink">System Config</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><span class="headerUser"><i class="fa fa-user fa-lg"></i>&nbsp;&nbsp;&nbsp;{{loggedInUserName}} &nbsp;&nbsp;</span></li>
+        <li *ngIf="rolesArr.indexOf('bd') > 0 || rolesArr.indexOf('admin') > 0"><span class="headerUser" [routerLink]="['/login']">Logout</span></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div *ngIf="videoOverlay && !(rolesArr.indexOf('bd') > 0 || rolesArr.indexOf('admin') > 0)" class="videoOverlay">
+  <br>&nbsp;<br>&nbsp;<br><br>&nbsp;<br>&nbsp;<br>
+  <div class="container text-center">
+    <div class="row text-center">
+      <div class="col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <iframe width="100%" height="250px;" src="https://www.youtube.com/embed/VsSNMzgsE7U?rel=0" frameborder="0" allowfullscreen></iframe>
+      </div>
+      &nbsp;<br>&nbsp;<br>&nbsp;<br>
+      <div class="col-xs-12">
+        <label class="checkbox-inline"><input type="checkbox" [(ngModel)]="checkboxFlag" value=""> I agree to the </label>&nbsp;&nbsp;&nbsp;
+        <span style="cursor: pointer" (click)="modal.open()"> <u>Terms of use.</u> </span><br><br>
+        <button type="button" [disabled]="!checkboxFlag" class="btn btn-primary" style="margin-right: 11px;" (click)="videoOverlay=false">Skip to Calculator</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div [ngBusy]="[busyA,busyB]"></div>
+<div *ngIf="!videoOverlay || rolesArr.indexOf('bd') > 0 || rolesArr.indexOf('admin') > 0" class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <p class="bg-default" class="dis">my overlay</p>
+    </div>
+    <div class="col-xs-12">
+      <div class="panel panel-info">
+        <div class="panel-heading panel-title">P</div>
+        <div *ngIf="config" class="panel-body">
+          <form>
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" title="title.">
+                <label for="dataCollected" class="col-sm-4 col-form-label">d</label>
+                <div class="col-sm-6">
+                  <div class="input-group">
+                    <input type="number" class="form-control" pattern="[0-9]" name="dataCollected" (change)="dcChanged()" [(ngModel)]="calc.dataCollected">
+                    <span class="input-group-addon">GBs</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <label class="col-sm-4 col-form-label">Documents Per GB</label>
+                <div class="col-sm-6">
+                  <input type="number" class="form-control" (change)="dcChanged()" name="docsGB" [(ngModel)]="config.documentsPerGb">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 text-center">
+      <button type="button" class="btn btn-primary" (click)="showComparison()">Show Comparison</button>
+    </div>&nbsp;<br>
+    <div *ngIf="showEstimate" class="panel panel-info">
+      <div class="panel-heading panel-title">Estimates</div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 table-responsive">
+            <div class="bg-danger" style="width:100%; padding: 6px;">Current Provider Estimate
+              <div *ngIf="config" class="tooltip_ pull-right">
+                <i class="fa fa-question-circle fa-1_5x"></i><span class="tooltiptext">
+                  </span>
+              </div>
+            </div>
+            <div id="pDiv1">
+              <table class="table table-bordered table-fixed table-condensed">
+                <thead>
+                  <tr>
+                    <th>Service</th>
+                    <th class="text-right">a</th>
+                    <th class="text-right">b</th>
+                    <th class="text-right">c</th>
+                    <th class="text-right">d</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let ii of cpEstimatedData; let i = index;">
+                    <td *ngFor="let jj of cpEstimatedData[i]; let j = index;" [ngClass]="{'text-right': j!=0}">{{jj}}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="4" class="text-right bg-danger">c</td>
+                    <td class="text-right">{{cpTotal}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 table-responsive">
+            <div *ngIf="config" class="bg-info" style="width:100%; padding: 6px;">ddd
+              <div class="tooltip_ pull-right">
+                <i class="fa fa-question-circle fa-1_5x"></i>
+                <div class="col-xs-12 tooltiptext">tooltip text
+                </div>
+              </div>
+            </div>
+            <div id="pDiv2">
+              <table class="table table-bordered table-fixed table-condensed">
+                <thead>
+                  <tr>
+                    <th>Service</th>
+                    <th class="text-right">a</th>
+                    <th class="text-right">b</th>
+                    <th class="text-right">c</th>
+                    <th class="text-right">d</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let ii of ulxEstimatedData; let i = index;">
+                    <td *ngFor="let jj of ulxEstimatedData[i]; let j = index;" [ngClass]="{'text-right': j!=0}">{{jj}}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="4" class="text-right bg-info">o c</td>
+                    <td class="text-right">{{ulxTotal}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="row text-center">
+            <div class="col-xs-12">
+              <button type="button" style="margin-bottom:5px;" class="btn btn-primary" (click)="emailEst()">EF</button>
+              <button type="button" style="margin-bottom:5px;" class="btn btn-primary" (click)="printEst('pDiv1','pDiv2', 'chartP')">P</button>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <nvd3 [options]="options" [data]="data" style="padding-left:30px;"></nvd3>
+        <nvd3 [hidden]="chartP" id="chartP" [options]="options2" [data]="data" style="padding-left:30px;"></nvd3>
+
+      </div>
+    </div>
+  </div>
+</div>&nbsp;
+<br>
+<modal #modal [keyboard]="false" [backdrop]="'static'">
+  <modal-header [show-close]="true">
+    <h4 class="modal-title">model title</h4>
+  </modal-header>
+  <modal-body>
+    <span id="TnC">my body</span>
+  </modal-body>
+  <modal-footer>
+    <button type="button" class="btn btn-default" (click)="modal.close()">Close</button>
+  </modal-footer>
+</modal>
