@@ -7,14 +7,11 @@ export class Roles {
 
     getUserRoles(): string[] {
         if (localStorage.getItem('cccurrentUserRole')) {
-            if (localStorage.getItem('cccurrentUserRole') == 'Client') {
-                return ['client'];
-            }
-            if (localStorage.getItem('cccurrentUserRole') == 'BD') {
-                return ['client', 'bd'];
+            if (localStorage.getItem('cccurrentUserRole') == 'user') {
+                return ['user'];
             }
             if (localStorage.getItem('cccurrentUserRole') == 'Admin') {
-                return ['client', 'bd', 'admin'];
+                return ['user', 'admin'];
             }
         }
         return [];
